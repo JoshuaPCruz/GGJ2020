@@ -1,5 +1,5 @@
 var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'cattack', { preload: preload, create: create, update: update });
-
+let stat = true;
 function preload ()
 {
     game.load.image('sky', 'assets/sky.png');
@@ -16,12 +16,13 @@ function create ()
 function update ()
 {
     teclas();
+    
 }
 
 function startScreen(){
     game.add.image(0, 0, 'sky');
     moneda(200,300);
-    gato(2)
+    gato(1)
 }
 
 function moneda(x, y) {
@@ -35,27 +36,25 @@ function moneda(x, y) {
 }
 
 function gato(x) {
-    gato = game.add.sprite(x * 24, x * 24, 'gato')
+    gato = game.add.sprite(x * 24, x * 500, 'gato')
     game.physics.enable(gato, Phaser.Physics.ARCADE);
     gato.body.setSize(10, 10, 45, 45);
-    
+    gato.scale.setTo(3,3);
     gato.animations.add('walk_left', [12, 13, 14], 10, true);
     gato.animations.add('walk_right', [24, 25, 26], 10, true);
-    
-
     gato.animations.play('walk_right');
 }
 
 function teclas() {
     if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
         gato.x -= 3;
-        //state = "left";
-        //anima(state);
+        // state = "left";
+        // anima(state);
         console.log('izquierda')
     } else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
         gato.x += 3;
-        //state = "right";
-        //anima(state);
+        // state = "right";
+        // anima(state);
         console.log('derecha')
     }
 }
