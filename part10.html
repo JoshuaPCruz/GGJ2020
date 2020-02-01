@@ -16,8 +16,8 @@
 
 var config = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 600,
+    width: 3000,
+    height: 400,
     physics: {
         default: 'arcade',
         arcade: {
@@ -45,7 +45,9 @@ var game = new Phaser.Game(config);
 
 function preload ()
 {
-    this.load.image('sky', 'assets/sky.png');
+    this.load.image('sky', 'assets/images/habitacion.svg');
+    this.load.image('banio', 'assets/images/Banio.svg');
+    this.load.image('sala', 'assets/images/Sala.svg');
     this.load.image('ground', 'assets/platform.png');
     this.load.image('star', 'assets/star.png');
     this.load.image('bomb', 'assets/bomb.png');
@@ -54,26 +56,46 @@ function preload ()
 
 function create ()
 {
+    var cam = this.cameras.main;
+
+    //  Test 1 - Change the x/y and keep w/h the same and the scene is cropped properly. The x/y appear to offset from the top left.
+    // cam.setViewport(0, 0, 800, 600);
+
+    //  Test 2 - Combine Test 1 with 'zoom' and the scene is no longer cropped and the viewport size is scaled wrong
+    // cam.zoom = 0.5;
+
+    //  Test 3 - Try half zoom and a half viewport size together - appears broken, image still pops out of the top, placement seems wrong
+    cam.setViewport(400, 100, 300, 400);
+    cam.zoom = 0.5;
+    console.log(cam)
+
     //  A simple background for our game
-    this.add.image(400, 300, 'sky');
+    platforms = this.physics.add.staticGroup();
+    platforms.create(250, 340, 'ground');
+    platforms.create(650, 340, 'ground');
+    platforms.create(1050, 340, 'ground');
+    platforms.create(1450, 340, 'ground');
+    platforms.create(1750, 340, 'ground');
+    this.add.image(350, 30, 'banio');
+    this.add.image(1010, 0, 'sala');
+    this.add.image(1610, 0, 'sky');
+    // this.minimap = this.cameras.add(200, 10, 400, 100).setZoom(0.1).setName('mini');
+    // this.minimap.setBackgroundColor(0x002244);
+    // this.minimap.scrollX = 1600;
+    // this.minimap.scrollY = 300;
+
 
     //  The platforms group contains the ground and the 2 ledges we can jump on
-    platforms = this.physics.add.staticGroup();
 
     //  Here we create the ground.
     //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
-    platforms.create(400, 568, 'ground').setScale(2).refreshBody();
 
     //  Now let's create some ledges
-    platforms.create(600, 400, 'ground');
-    platforms.create(50, 250, 'ground');
-    platforms.create(750, 220, 'ground');
 
     // The player and its settings
-    player = this.physics.add.sprite(100, 450, 'dude');
+    player = this.physics.add.sprite(100, 00, 'dude');
 
     //  Player physics properties. Give the little guy a slight bounce.
-    player.setBounce(0.2);
     player.setCollideWorldBounds(true);
 
     //  Our player animations, turning, walking left and walking right.
@@ -130,8 +152,10 @@ function create ()
     this.physics.add.collider(player, bombs, hitBomb, null, this);
 }
 
-function update ()
+function update (time,delta)
 {
+    cam = this.cameras.main;
+
     if (gameOver)
     {
         return;
@@ -140,13 +164,12 @@ function update ()
     if (cursors.left.isDown)
     {
         player.setVelocityX(-160);
-
+        console.log(game)
         player.anims.play('left', true);
     }
     else if (cursors.right.isDown)
     {
         player.setVelocityX(160);
-
         player.anims.play('right', true);
     }
     else
@@ -159,6 +182,16 @@ function update ()
     if (cursors.up.isDown && player.body.touching.down)
     {
         player.setVelocityY(-330);
+    }
+    if(player.x > 650){
+        console.log(cam)
+        cam.scrollX = 860;
+    }else if (player.x < 650) {
+        cam.scrollX = 200;
+    }
+    if(player.x > 1300){
+        console.log(cam)
+        cam.scrollX = 1480;
     }
 }
 
